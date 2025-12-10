@@ -396,6 +396,10 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
             {
                 WriteGetRowParser(sb, resultType, readers, grp.Key.Flags, grp.Key.AdditionalCommandState?.QueryColumns ?? default);
             }
+            else if (flags.HasAny(OperationFlags.MultiMap))
+            {
+                WriteMultiMapImplementation(sb, method, flags, commandTypeMode, parameterType, grp.Key.ParameterMap, grp.Key.UniqueLocation is not null, methodParameters, factories, readers, fixedSql, additionalCommandState);
+            }
             else if (!TryWriteMultiExecImplementation(sb, flags, commandTypeMode, parameterType, grp.Key.ParameterMap, grp.Key.UniqueLocation is not null, methodParameters, factories, fixedSql, additionalCommandState))
             {
                 WriteSingleImplementation(sb, method, resultType, flags, commandTypeMode, parameterType, grp.Key.ParameterMap, grp.Key.UniqueLocation is not null, methodParameters, factories, readers, fixedSql, additionalCommandState);
