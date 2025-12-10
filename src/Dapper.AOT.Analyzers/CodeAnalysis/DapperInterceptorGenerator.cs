@@ -110,6 +110,12 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
                 return null;
             }
 
+            // TODO: Full splitOn implementation pending - requires multi-type row factories and map function invocation
+            if (flags.HasAny(OperationFlags.MultiType))
+            {
+                flags |= OperationFlags.DoNotGenerate;
+                return null;
+            }
 
 
             // additional result-type checks
