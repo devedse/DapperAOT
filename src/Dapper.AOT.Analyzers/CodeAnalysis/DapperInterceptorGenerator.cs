@@ -98,7 +98,7 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
             if (ctx.Node is not InvocationExpressionSyntax ie
                 || ctx.SemanticModel.GetOperation(ie) is not IInvocationOperation op
                 || !op.IsDapperMethod(out var flags)
-                || flags.HasAny(OperationFlags.NotAotSupported | OperationFlags.DoNotGenerate)
+                || flags.HasAny(OperationFlags.NotAotSupported | OperationFlags.DoNotGenerate | OperationFlags.MultiMap)
                 || !Inspection.IsEnabled(ctx, op, Types.DapperAotAttribute, out var aotAttribExists))
             {
                 return null;

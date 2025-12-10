@@ -22,6 +22,5 @@ public class DAP001 : Verifier<DapperAnalyzer>
             }
         }
         """, DefaultConfig,
-        [Diagnostic(Diagnostics.UnsupportedMethod).WithLocation(0)
-            .WithArguments("SqlMapper.Query<int, int, int>(IDbConnection, string, Func<int, int, int>, object?, IDbTransaction?, bool, string, int?, CommandType?)")]);
+        [Diagnostic(Diagnostics.MultiMapNotSupported).WithLocation(0)]);
 }

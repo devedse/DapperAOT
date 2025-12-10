@@ -57,6 +57,7 @@ partial class DapperAnalyzer
         AmbiguousFields = LibraryWarning("DAP047", "Ambiguous fields", "Fields have same name '{0}' after normalization and can be conflated"),
         MoveFromDbString = LibraryWarning("DAP048", "Move from DbString to DbValue", "DbString achieves the same as [DbValue] does. Use it instead."),
         UnableToBindQueryColumns = LibraryError("DAP049", "Unable to bind query columns", "Something went terribly wrong"),
+        MultiMapNotSupported = LibraryInfo("DAP050", "Multi-map queries not currently supported", "Multi-map queries (Query<T1, T2, ...> with splitOn parameter) are not currently supported by Dapper.AOT"),
 
         // SQL parse specific
         GeneralSqlError = SqlWarning("DAP200", "SQL error", "SQL error: {0}"),
