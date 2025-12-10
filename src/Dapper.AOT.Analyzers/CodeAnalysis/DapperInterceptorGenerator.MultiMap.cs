@@ -128,13 +128,11 @@ public sealed partial class DapperInterceptorGenerator
             sb.Append(", cancellationToken: ").Append(Forward(methodParameters, "cancellationToken"));
         }
         
-        sb.Append(")");
-        
         if (flags.HasAll(OperationFlags.Async | OperationFlags.Query | OperationFlags.Buffered))
         {
-            sb.Append(")");
+            sb.Append(")").Outdent(false);
         }
-        
+        sb.Append(")");
         sb.Append(";").NewLine();
     }
 }
