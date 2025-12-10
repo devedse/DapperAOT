@@ -198,16 +198,12 @@ public sealed partial class DapperAnalyzer : DiagnosticAnalyzer
             if (aotEnabled)
             {
                 OnDapperAotHit(); // all good for AOT
-                if (flags.HasAny(OperationFlags.MultiMap))
-                {
-                    ctx.ReportDiagnostic(Diagnostic.Create(Diagnostics.MultiMapNotSupported, location));
-                }
-                else if (flags.HasAny(OperationFlags.NotAotSupported))
+                if (flags.HasAny(OperationFlags.NotAotSupported))
                 {
                     ctx.ReportDiagnostic(Diagnostic.Create(Diagnostics.UnsupportedMethod, location, invoke.GetSignature()));
                 }
             }
-            else if (!aotAttribExists && !flags.HasAny(OperationFlags.NotAotSupported) && !flags.HasAny(OperationFlags.MultiMap))
+            else if (!aotAttribExists && !flags.HasAny(OperationFlags.NotAotSupported))
             {
                 // we might have been able to do more, but Dapper.AOT wasn't enabled
                 OnDapperAotMiss(location);
@@ -560,10 +556,6 @@ public sealed partial class DapperAnalyzer : DiagnosticAnalyzer
                 case "returnNullIfFirstMissing":
                 case "concreteType" when arg.Value is IDefaultValueOperation || (arg.ConstantValue.HasValue && arg.ConstantValue.Value is null):
                     // nothing to do
-                    break;
-                case "map":
-                case "splitOn":
-                    // multi-map parameters - handled separately
                     break;
                 case "commandType":
                     if (TryGetConstantValue(arg, out int? ct))

@@ -1244,7 +1244,7 @@ internal static class Inspection
         {
             case "Query":
                 flags |= OperationFlags.Query;
-                if (method.Arity > 1) flags |= OperationFlags.MultiMap;
+                if (method.Arity > 1) flags |= OperationFlags.NotAotSupported;
                 break;
             case "QueryAsync":
             case "QueryUnbufferedAsync":
@@ -1597,6 +1597,5 @@ enum OperationFlags
     QueryMultiple = 1 << 22,
     GetRowParser = 1 << 23,
     StrictTypes = 1 << 24,
-    MultiMap = 1 << 25, // multi-map query (Query<T1, T2, TReturn>)
     NotAotSupported = 1 << 31,
 }
