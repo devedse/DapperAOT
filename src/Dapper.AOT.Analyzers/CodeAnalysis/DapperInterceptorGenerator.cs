@@ -1013,7 +1013,7 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
                 if (useConstructorDeferred)
                 {
                     // `return new Type(member0, member1, member2, ...);`
-                    sb.Append("return new ").Append(type).Append('('); 
+                    sb.Append("return new ").AppendTypeForNew(type).Append('('); 
                     WriteDeferredMethodArgs();
                     sb.Append(')');
                     WriteDeferredInitialization();
@@ -1035,7 +1035,7 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
                     //      Member1 = value1,
                     //      Member2 = value2
                     // }
-                    sb.Append("return new ").Append(type);
+                    sb.Append("return new ").AppendTypeForNew(type);
                     WriteDeferredInitialization();
                     sb.Append(";").Outdent();
                 }
