@@ -17,11 +17,11 @@ public class DAP001 : Verifier<DapperAnalyzer>
         {
             public void Foo(DbConnection conn)
             {
-                _ = conn.{|#0:Query<int,int,int>|}("proc", null!);
+                _ = conn.{|#0:Query<int,int,int,int,int>|}("proc", null!);
                 _ = conn.Query("proc");
             }
         }
         """, DefaultConfig,
         [Diagnostic(Diagnostics.UnsupportedMethod).WithLocation(0)
-            .WithArguments("SqlMapper.Query<int, int, int>(IDbConnection, string, Func<int, int, int>, object?, IDbTransaction?, bool, string, int?, CommandType?)")]);
+            .WithArguments("SqlMapper.Query<int, int, int, int, int>(IDbConnection, string, Func<int, int, int, int, int>, object?, IDbTransaction?, bool, string, int?, CommandType?)")]);
 }

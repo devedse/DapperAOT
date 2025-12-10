@@ -1244,7 +1244,12 @@ internal static class Inspection
         {
             case "Query":
                 flags |= OperationFlags.Query;
-                if (method.Arity > 1) flags |= OperationFlags.MultiMap;
+                if (method.Arity > 1)
+                {
+                    flags |= OperationFlags.MultiMap;
+                    // Multi-map is only supported for 2-3 types (arity 3-4: T1, T2, TReturn or T1, T2, T3, TReturn)
+                    if (method.Arity > 4) flags |= OperationFlags.NotAotSupported;
+                }
                 break;
             case "QueryAsync":
             case "QueryUnbufferedAsync":
