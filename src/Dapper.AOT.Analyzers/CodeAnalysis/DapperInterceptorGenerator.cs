@@ -110,6 +110,17 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
                 return null;
             }
 
+            // TODO: Full splitOn implementation pending (see SPLITON_IMPLEMENTATION_GUIDE.md Phase 2+)
+            // Multi-type queries require:
+            // - MultiTypeRowFactory<T1, T2, ..., TReturn> runtime components
+            // - Column splitting logic based on splitOn parameter
+            // - Map function invocation in generated code
+            // For now, fall back to vanilla Dapper
+            if (flags.HasAny(OperationFlags.MultiType))
+            {
+                flags |= OperationFlags.DoNotGenerate;
+                return null;
+            }
 
 
             // additional result-type checks
