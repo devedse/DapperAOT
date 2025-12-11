@@ -1247,8 +1247,8 @@ internal static class Inspection
                 if (method.Arity > 1)
                 {
                     flags |= OperationFlags.MultiMap;
-                    // Multi-map is only supported for 2-3 types (arity 3-4: T1, T2, TReturn or T1, T2, T3, TReturn)
-                    if (method.Arity > 4) flags |= OperationFlags.NotAotSupported;
+                    // Multi-map is supported for 2-7 types (arity 3-8: T1, T2, TReturn through T1, T2, T3, T4, T5, T6, T7, TReturn)
+                    if (method.Arity > 8) flags |= OperationFlags.NotAotSupported;
                 }
                 break;
             case "QueryAsync":

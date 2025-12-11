@@ -69,9 +69,19 @@ public sealed partial class DapperInterceptorGenerator
         }
         sb.Append(").");
         
-        // Call the appropriate QueryBuffered/QueryBufferedAsync method
+        // Call the appropriate QueryBuffered/QueryBufferedAsync/QueryUnbuffered/QueryUnbufferedAsync method
         bool isAsync = flags.HasAny(OperationFlags.Async);
-        sb.Append("QueryBuffered");
+        bool isUnbuffered = flags.HasAny(OperationFlags.Unbuffered);
+        
+        if (isUnbuffered)
+        {
+            sb.Append("QueryUnbuffered");
+        }
+        else
+        {
+            sb.Append("QueryBuffered");
+        }
+        
         if (isAsync)
         {
             sb.Append("Async");
@@ -108,8 +118,8 @@ public sealed partial class DapperInterceptorGenerator
             sb.Append("\"Id\"");
         }
         
-        // Add rowCountHint if needed
-        if (flags.HasAny(OperationFlags.Query) && additionalCommandState is { HasRowCountHint: true })
+        // Add rowCountHint if needed (only for buffered queries)
+        if (!isUnbuffered && flags.HasAny(OperationFlags.Query) && additionalCommandState is { HasRowCountHint: true })
         {
             if (additionalCommandState.RowCountHintMemberName is null)
             {
