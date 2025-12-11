@@ -59,7 +59,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
             private RowFactory0() {}
             public override object? Tokenize(global::System.Data.Common.DbDataReader reader, global::System.Span<int> tokens, int columnOffset)
             {
-                for (int i = 0; i < tokens.Length; i++)
+                int availableColumns = reader.FieldCount - columnOffset;
+                int tokenCount = global::System.Math.Min(tokens.Length, availableColumns);
+                for (int i = 0; i < tokenCount; i++)
                 {
                     int token = -1;
                     var name = reader.GetName(columnOffset);
@@ -146,6 +148,11 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                     tokens[i] = token;
                     columnOffset++;
 
+                }
+                // Initialize remaining tokens to -1 (unmapped)
+                for (int i = tokenCount; i < tokens.Length; i++)
+                {
+                    tokens[i] = -1;
                 }
                 return null;
             }
@@ -305,6 +312,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 49:
                             result.ModifiedDate = GetValue<global::System.DateTime>(reader, columnOffset);
+                            break;
+                        case -1:
+                            // unmapped column, skip
                             break;
 
                     }

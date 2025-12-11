@@ -313,6 +313,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                         case 49:
                             result.ModifiedDate = GetValue<global::System.DateTime>(reader, columnOffset);
                             break;
+                        case -1:
+                            // unmapped column, skip
+                            break;
 
                     }
                     columnOffset++;

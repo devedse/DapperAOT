@@ -135,6 +135,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                         case 7:
                             result.Y = reader.IsDBNull(columnOffset) ? (string?)null : GetValue<string>(reader, columnOffset);
                             break;
+                        case -1:
+                            // unmapped column, skip
+                            break;
 
                     }
                     columnOffset++;
@@ -174,6 +177,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 4:
                             result.Y = reader.IsDBNull(columnOffset) ? (string?)null : reader.GetString(columnOffset);
+                            break;
+                        case -1:
+                            // unmapped column, skip
                             break;
 
                     }
@@ -239,6 +245,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 2:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : reader.GetDouble(columnOffset);
+                            break;
+                        case -1:
+                            // unmapped column, skip
                             break;
 
                     }
@@ -312,6 +321,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
+                            break;
+                        case -1:
+                            // unmapped column, skip
                             break;
 
                     }

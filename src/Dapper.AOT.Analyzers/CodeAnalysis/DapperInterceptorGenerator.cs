@@ -1006,6 +1006,11 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
                 token++;
             }
 
+            // Handle unmapped columns (token = -1)
+            sb.Append("case -1:").NewLine().Indent(false)
+                .Append("// unmapped column, skip").NewLine()
+                .Append("break;").NewLine().Outdent(false);
+
             sb.Outdent().NewLine().Append("columnOffset++;").NewLine().Outdent().NewLine();
 
             if (useDeferredConstruction)

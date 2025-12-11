@@ -120,6 +120,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                         case 3:
                             result.RandomNumber = GetValue<int>(reader, columnOffset);
                             break;
+                        case -1:
+                            // unmapped column, skip
+                            break;
 
                     }
                     columnOffset++;

@@ -173,6 +173,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                         case 1:
                             result.Id = GetValue<int>(reader, columnOffset);
                             break;
+                        case -1:
+                            // unmapped column, skip
+                            break;
 
                     }
                     columnOffset++;
@@ -228,6 +231,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                         case 1:
                             result.Id = GetValue<int>(reader, columnOffset);
                             break;
+                        case -1:
+                            // unmapped column, skip
+                            break;
 
                     }
                     columnOffset++;
@@ -282,6 +288,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 1:
                             result.Id = GetValue<int>(reader, columnOffset);
+                            break;
+                        case -1:
+                            // unmapped column, skip
                             break;
 
                     }

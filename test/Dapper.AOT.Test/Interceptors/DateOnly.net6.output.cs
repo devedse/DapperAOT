@@ -118,6 +118,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                         case 5:
                             result.BirthDate = GetValue<global::System.DateOnly>(reader, columnOffset);
                             break;
+                        case -1:
+                            // unmapped column, skip
+                            break;
 
                     }
                     columnOffset++;

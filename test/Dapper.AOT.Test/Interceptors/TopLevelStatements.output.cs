@@ -92,6 +92,9 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                         case 3:
                             value1 = reader.IsDBNull(columnOffset) ? (string?)null : GetValue<string>(reader, columnOffset);
                             break;
+                        case -1:
+                            // unmapped column, skip
+                            break;
 
                     }
                     columnOffset++;
