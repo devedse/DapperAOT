@@ -30,7 +30,7 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var split = FindSplit(state.Reader, splitOn, tokenState1);
+                var split = FindSplits(state.Reader, splitOn, 1)[0];
                 var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), split);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
@@ -80,9 +80,9 @@ partial struct Command<TArgs>
             List<TReturn> results;
             if (await state.Reader.ReadAsync(cancellationToken))
             {
+                var splits = FindSplits(state.Reader, splitOn, 1);
                 var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var split = FindSplit(state.Reader, splitOn, tokenState1);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), split);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
@@ -108,39 +108,6 @@ partial struct Command<TArgs>
         {
             await state.DisposeAsync();
         }
-    }
-
-    /// <summary>
-    /// Finds the column index where the split should occur based on column name
-    /// </summary>
-    private static int FindSplit(System.Data.Common.DbDataReader reader, string splitOn, object tokenState)
-    {
-        // Default split is after finding the first occurrence of the splitOn column
-        var fieldCount = reader.FieldCount;
-#if NET5_0_OR_GREATER
-        var splitColumns = splitOn.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-#else
-        var splitColumns = splitOn.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-        for (int idx = 0; idx < splitColumns.Length; idx++)
-        {
-            splitColumns[idx] = splitColumns[idx].Trim();
-        }
-#endif
-        
-        for (int i = 0; i < fieldCount; i++)
-        {
-            var name = reader.GetName(i);
-            foreach (var split in splitColumns)
-            {
-                if (StringHashing.NormalizedEquals(name, split))
-                {
-                    return i;
-                }
-            }
-        }
-        
-        // If not found, split in the middle
-        return fieldCount / 2;
     }
 
     /// <summary>
@@ -790,7 +757,7 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var split = FindSplit(state.Reader, splitOn, tokenState1);
+                var split = FindSplits(state.Reader, splitOn, 1)[0];
                 var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), split);
                 
                 do
@@ -832,7 +799,7 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var split = FindSplit(state.Reader, splitOn, tokenState1);
+                var split = FindSplits(state.Reader, splitOn, 1)[0];
                 var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), split);
                 
                 do
