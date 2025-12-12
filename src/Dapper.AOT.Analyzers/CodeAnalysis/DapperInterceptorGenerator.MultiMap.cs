@@ -23,9 +23,6 @@ public sealed partial class DapperInterceptorGenerator
         var typeArgs = method.TypeArguments;
         var arity = typeArgs.Length;
         
-        // The return type is the last type argument
-        var returnType = typeArgs[arity - 1];
-        
         sb.Append("return ");
         if (flags.HasAll(OperationFlags.Async | OperationFlags.Query | OperationFlags.Buffered))
         {

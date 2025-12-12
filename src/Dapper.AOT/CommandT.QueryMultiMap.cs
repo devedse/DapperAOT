@@ -11,6 +11,56 @@ namespace Dapper;
 partial struct Command<TArgs>
 {
     /// <summary>
+    /// Finds multiple split points based on splitOn column names
+    /// </summary>
+    private static int[] FindSplits(System.Data.Common.DbDataReader reader, string splitOn, int count)
+    {
+        var splits = new int[count];
+        var fieldCount = reader.FieldCount;
+#if NET5_0_OR_GREATER
+        var splitColumns = splitOn.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+#else
+        var splitColumns = splitOn.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        for (int idx = 0; idx < splitColumns.Length; idx++)
+        {
+            splitColumns[idx] = splitColumns[idx].Trim();
+        }
+#endif
+        
+        int splitIndex = 0;
+        int lastSplit = 0;
+        
+        for (int i = 0; i < fieldCount && splitIndex < count; i++)
+        {
+            var name = reader.GetName(i);
+            foreach (var split in splitColumns)
+            {
+                if (StringHashing.NormalizedEquals(name, split))
+                {
+                    splits[splitIndex++] = i;
+                    lastSplit = i;
+                    break;
+                }
+            }
+        }
+        
+        // Fill remaining splits evenly if not all found
+        if (splitIndex < count)
+        {
+            var remaining = count - splitIndex;
+            var step = (fieldCount - lastSplit) / (remaining + 1);
+            for (int i = 0; i < remaining; i++)
+            {
+                lastSplit += step;
+                splits[splitIndex++] = lastSplit;
+            }
+        }
+        
+        return splits;
+    }
+
+
+    /// <summary>
     /// Reads buffered rows from a multi-map query with 2 types
     /// </summary>
     public List<TReturn> QueryBuffered<T1, T2, TReturn>(
@@ -108,55 +158,6 @@ partial struct Command<TArgs>
         {
             await state.DisposeAsync();
         }
-    }
-
-    /// <summary>
-    /// Finds multiple split points based on splitOn column names
-    /// </summary>
-    private static int[] FindSplits(System.Data.Common.DbDataReader reader, string splitOn, int count)
-    {
-        var splits = new int[count];
-        var fieldCount = reader.FieldCount;
-#if NET5_0_OR_GREATER
-        var splitColumns = splitOn.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-#else
-        var splitColumns = splitOn.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-        for (int idx = 0; idx < splitColumns.Length; idx++)
-        {
-            splitColumns[idx] = splitColumns[idx].Trim();
-        }
-#endif
-        
-        int splitIndex = 0;
-        int lastSplit = 0;
-        
-        for (int i = 0; i < fieldCount && splitIndex < count; i++)
-        {
-            var name = reader.GetName(i);
-            foreach (var split in splitColumns)
-            {
-                if (StringHashing.NormalizedEquals(name, split))
-                {
-                    splits[splitIndex++] = i;
-                    lastSplit = i;
-                    break;
-                }
-            }
-        }
-        
-        // Fill remaining splits evenly if not all found
-        if (splitIndex < count)
-        {
-            var remaining = count - splitIndex;
-            var step = (fieldCount - lastSplit) / (remaining + 1);
-            for (int i = 0; i < remaining; i++)
-            {
-                lastSplit += step;
-                splits[splitIndex++] = lastSplit;
-            }
-        }
-        
-        return splits;
     }
 
     /// <summary>
