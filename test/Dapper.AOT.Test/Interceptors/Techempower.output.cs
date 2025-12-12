@@ -99,13 +99,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::World Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::World result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -119,9 +121,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 3:
                             result.RandomNumber = GetValue<int>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }

@@ -860,7 +860,8 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
                     .Outdent().NewLine()
                     .Append("// Initialize remaining tokens to -1 (unmapped)").NewLine()
                     .Append("for (int i = tokenCount; i < tokens.Length; i++)").Indent().NewLine()
-                    .Append("tokens[i] = -1;").Outdent().NewLine();
+                    .Append("tokens[i] = -1;").Outdent().NewLine()
+                    .Append("return tokenCount;").Outdent().NewLine();
             }
             else
             {
@@ -868,6 +869,7 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
                 if (flags.HasAny(OperationFlags.StrictTypes))
                 {
                     sb.Append("// (no mapping applied for strict types and pre-defined columns)").NewLine();
+                    sb.Append("return null;").Outdent().NewLine();
                 }
                 else
                 {
@@ -890,11 +892,10 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
                         .Append("columnOffset++;").Outdent().NewLine()
                         .Append("// Initialize remaining tokens to -1 (unmapped)").NewLine()
                         .Append("for (int i = tokenCount; i < tokens.Length; i++)").Indent().NewLine()
-                        .Append("tokens[i] = -1;").Outdent().NewLine();
+                        .Append("tokens[i] = -1;").Outdent().NewLine()
+                        .Append("return tokenCount;").Outdent().NewLine();
                 }
             }
-
-            sb.Append("return null;").Outdent().NewLine();
         }
         void WriteReadMethod(in GenerateState context)
         {
@@ -950,13 +951,15 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
             {
                 // no mapping involved - simple ordinal iteration
                 sb.Append("int lim = global::System.Math.Min(tokens.Length, ").Append(queryColumns.Length).Append(");").NewLine()
-                    .Append("for (int token = 0; token < lim; token++) // query-columns predefined");
+                    .Append("for (int token = 0; token < lim; token++) // query-columns predefined").Indent().NewLine();
             }
             else
             {
-                sb.Append("foreach (var token in tokens)");
+                sb.Append("int tokenCount = state is int count ? count : tokens.Length;").NewLine()
+                    .Append("for (int i = 0; i < tokenCount; i++)").Indent().NewLine()
+                    .Append("var token = tokens[i];").NewLine();
             }
-            sb.Indent().NewLine().Append("switch (token)").Indent().NewLine();
+            sb.Append("switch (token)").Indent().NewLine();
 
             token = 0;
             foreach (var member in members)
@@ -1005,11 +1008,6 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
                 }
                 token++;
             }
-
-            // Handle unmapped columns (token = -1)
-            sb.Append("case -1:").NewLine().Indent(false)
-                .Append("// unmapped column, skip").NewLine()
-                .Append("break;").NewLine().Outdent(false);
 
             sb.Outdent().NewLine().Append("columnOffset++;").NewLine().Outdent().NewLine();
 

@@ -158,13 +158,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::SomeCode.InternalNesting.SomePublicType Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::SomeCode.InternalNesting.SomePublicType result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -172,9 +174,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 1:
                             result.Id = GetValue<int>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -216,13 +215,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::SomeCode.InternalNesting.SomeInternalType Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::SomeCode.InternalNesting.SomeInternalType result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -230,9 +231,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 1:
                             result.Id = GetValue<int>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -274,13 +272,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::SomeCode.InternalNesting.SomeProtectedInternalType Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::SomeCode.InternalNesting.SomeProtectedInternalType result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -288,9 +288,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 1:
                             result.Id = GetValue<int>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }

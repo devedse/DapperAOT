@@ -227,13 +227,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.ParameterlessCtor Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::Foo.ParameterlessCtor result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -253,9 +255,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -303,15 +302,17 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.GetOnlyPropertiesViaConstructor Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 int value0 = default;
                 string? value1 = default;
                 double? value2 = default;
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -331,9 +332,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             value2 = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -379,13 +377,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.RecordClass Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::Foo.RecordClass result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -405,9 +405,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -455,15 +452,17 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.RecordClassSimpleCtor Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 int value0 = default;
                 string? value1 = default;
                 double? value2 = default;
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -483,9 +482,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             value2 = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -531,13 +527,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.RecordStruct Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::Foo.RecordStruct result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -557,9 +555,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -607,15 +602,17 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.RecordStructSimpleCtor Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 int value0 = default;
                 string? value1 = default;
                 double? value2 = default;
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -635,9 +632,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             value2 = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -683,15 +677,17 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.InitPropsOnly Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 int value0 = default;
                 string? value1 = default;
                 double? value2 = default;
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -711,9 +707,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             value2 = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -764,15 +757,17 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.InitPropsAndDapperAotCtor Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 int value0 = default;
                 string? value1 = default;
                 double? value2 = default;
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -792,9 +787,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             value2 = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -844,13 +836,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.OnlyNonDapperAotCtor Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::Foo.OnlyNonDapperAotCtor result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -870,9 +864,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -920,13 +911,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.SingleDefaultCtor Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::Foo.SingleDefaultCtor result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -946,9 +939,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -996,13 +986,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.MultipleDapperAotCtors Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::Foo.MultipleDapperAotCtors result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -1022,9 +1014,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
@@ -1072,13 +1061,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.SingleDapperAotCtor Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::Foo.SingleDapperAotCtor result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -1098,9 +1089,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }

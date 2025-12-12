@@ -33,8 +33,64 @@ namespace Dapper.AOT // interceptors must be in a known namespace
 
         }
 
+        [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 14, 24)]
+        internal static global::System.Collections.Generic.IEnumerable<global::Foo.Customer> Query2(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        {
+            // Query, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
+            // returns data: global::Foo.Customer
+            global::System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(sql));
+            global::System.Diagnostics.Debug.Assert((commandType ?? global::Dapper.DapperAotExtensions.GetCommandType(sql)) == global::System.Data.CommandType.StoredProcedure);
+            global::System.Diagnostics.Debug.Assert(buffered is true);
+            global::System.Diagnostics.Debug.Assert(param is null);
+
+            return global::Dapper.DapperAotExtensions.Command(cnn, transaction, sql, global::System.Data.CommandType.StoredProcedure, commandTimeout.GetValueOrDefault(), DefaultCommandFactory).QueryBuffered<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer>(param, map, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, splitOn);
+
+        }
+
+        [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 15, 24)]
+        internal static global::System.Collections.Generic.IEnumerable<global::Foo.Customer> Query3(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        {
+            // Query, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
+            // returns data: global::Foo.Customer
+            global::System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(sql));
+            global::System.Diagnostics.Debug.Assert((commandType ?? global::Dapper.DapperAotExtensions.GetCommandType(sql)) == global::System.Data.CommandType.StoredProcedure);
+            global::System.Diagnostics.Debug.Assert(buffered is true);
+            global::System.Diagnostics.Debug.Assert(param is null);
+
+            return global::Dapper.DapperAotExtensions.Command(cnn, transaction, sql, global::System.Data.CommandType.StoredProcedure, commandTimeout.GetValueOrDefault(), DefaultCommandFactory).QueryBuffered<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer>(param, map, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, splitOn);
+
+        }
+
+        [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 16, 24)]
+        internal static global::System.Collections.Generic.IEnumerable<global::Foo.Customer> Query4(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        {
+            // Query, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
+            // returns data: global::Foo.Customer
+            global::System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(sql));
+            global::System.Diagnostics.Debug.Assert((commandType ?? global::Dapper.DapperAotExtensions.GetCommandType(sql)) == global::System.Data.CommandType.StoredProcedure);
+            global::System.Diagnostics.Debug.Assert(buffered is true);
+            global::System.Diagnostics.Debug.Assert(param is null);
+
+            return global::Dapper.DapperAotExtensions.Command(cnn, transaction, sql, global::System.Data.CommandType.StoredProcedure, commandTimeout.GetValueOrDefault(), DefaultCommandFactory).QueryBuffered<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer>(param, map, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, splitOn);
+
+        }
+
+        [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 17, 24)]
+        internal static global::System.Collections.Generic.IEnumerable<global::Foo.Customer> Query5(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        {
+            // Query, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
+            // returns data: global::Foo.Customer
+            global::System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(sql));
+            global::System.Diagnostics.Debug.Assert((commandType ?? global::Dapper.DapperAotExtensions.GetCommandType(sql)) == global::System.Data.CommandType.StoredProcedure);
+            global::System.Diagnostics.Debug.Assert(buffered is true);
+            global::System.Diagnostics.Debug.Assert(param is null);
+
+            return global::Dapper.DapperAotExtensions.Command(cnn, transaction, sql, global::System.Data.CommandType.StoredProcedure, commandTimeout.GetValueOrDefault(), DefaultCommandFactory).QueryBuffered<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer>(param, map, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, splitOn);
+
+        }
+
         [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 19, 30)]
-        internal static global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<global::Foo.Customer>> QueryAsync2(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        internal static global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<global::Foo.Customer>> QueryAsync6(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
         {
             // Query, Async, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
             // returns data: global::Foo.Customer
@@ -49,7 +105,7 @@ namespace Dapper.AOT // interceptors must be in a known namespace
         }
 
         [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 20, 30)]
-        internal static global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<global::Foo.Customer>> QueryAsync3(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        internal static global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<global::Foo.Customer>> QueryAsync7(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
         {
             // Query, Async, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
             // returns data: global::Foo.Customer
@@ -60,6 +116,66 @@ namespace Dapper.AOT // interceptors must be in a known namespace
 
             return global::Dapper.DapperAotExtensions.AsEnumerableAsync(
                 global::Dapper.DapperAotExtensions.Command(cnn, transaction, sql, global::System.Data.CommandType.StoredProcedure, commandTimeout.GetValueOrDefault(), DefaultCommandFactory).QueryBufferedAsync<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer>(param, map, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, splitOn));
+
+        }
+
+        [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 21, 30)]
+        internal static global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<global::Foo.Customer>> QueryAsync8(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        {
+            // Query, Async, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
+            // returns data: global::Foo.Customer
+            global::System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(sql));
+            global::System.Diagnostics.Debug.Assert((commandType ?? global::Dapper.DapperAotExtensions.GetCommandType(sql)) == global::System.Data.CommandType.StoredProcedure);
+            global::System.Diagnostics.Debug.Assert(buffered is true);
+            global::System.Diagnostics.Debug.Assert(param is null);
+
+            return global::Dapper.DapperAotExtensions.AsEnumerableAsync(
+                global::Dapper.DapperAotExtensions.Command(cnn, transaction, sql, global::System.Data.CommandType.StoredProcedure, commandTimeout.GetValueOrDefault(), DefaultCommandFactory).QueryBufferedAsync<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer>(param, map, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, splitOn));
+
+        }
+
+        [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 22, 30)]
+        internal static global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<global::Foo.Customer>> QueryAsync9(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        {
+            // Query, Async, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
+            // returns data: global::Foo.Customer
+            global::System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(sql));
+            global::System.Diagnostics.Debug.Assert((commandType ?? global::Dapper.DapperAotExtensions.GetCommandType(sql)) == global::System.Data.CommandType.StoredProcedure);
+            global::System.Diagnostics.Debug.Assert(buffered is true);
+            global::System.Diagnostics.Debug.Assert(param is null);
+
+            return global::Dapper.DapperAotExtensions.AsEnumerableAsync(
+                global::Dapper.DapperAotExtensions.Command(cnn, transaction, sql, global::System.Data.CommandType.StoredProcedure, commandTimeout.GetValueOrDefault(), DefaultCommandFactory).QueryBufferedAsync<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer>(param, map, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, splitOn));
+
+        }
+
+        [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 23, 30)]
+        internal static global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<global::Foo.Customer>> QueryAsync10(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        {
+            // Query, Async, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
+            // returns data: global::Foo.Customer
+            global::System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(sql));
+            global::System.Diagnostics.Debug.Assert((commandType ?? global::Dapper.DapperAotExtensions.GetCommandType(sql)) == global::System.Data.CommandType.StoredProcedure);
+            global::System.Diagnostics.Debug.Assert(buffered is true);
+            global::System.Diagnostics.Debug.Assert(param is null);
+
+            return global::Dapper.DapperAotExtensions.AsEnumerableAsync(
+                global::Dapper.DapperAotExtensions.Command(cnn, transaction, sql, global::System.Data.CommandType.StoredProcedure, commandTimeout.GetValueOrDefault(), DefaultCommandFactory).QueryBufferedAsync<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer>(param, map, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, splitOn));
+
+        }
+
+        [global::System.Runtime.CompilerServices.InterceptsLocationAttribute("Interceptors\\QueryMultiType.input.cs", 24, 30)]
+        internal static global::System.Threading.Tasks.Task<global::System.Collections.Generic.IEnumerable<global::Foo.Customer>> QueryAsync11(this global::System.Data.IDbConnection cnn, string sql, global::System.Func<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer> map, object? param, global::System.Data.IDbTransaction? transaction, bool buffered, string splitOn, int? commandTimeout, global::System.Data.CommandType? commandType)
+        {
+            // Query, Async, TypedResult, Buffered, StoredProcedure, BindResultsByName, MultiMap
+            // returns data: global::Foo.Customer
+            global::System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(sql));
+            global::System.Diagnostics.Debug.Assert((commandType ?? global::Dapper.DapperAotExtensions.GetCommandType(sql)) == global::System.Data.CommandType.StoredProcedure);
+            global::System.Diagnostics.Debug.Assert(buffered is true);
+            global::System.Diagnostics.Debug.Assert(param is null);
+
+            return global::Dapper.DapperAotExtensions.AsEnumerableAsync(
+                global::Dapper.DapperAotExtensions.Command(cnn, transaction, sql, global::System.Data.CommandType.StoredProcedure, commandTimeout.GetValueOrDefault(), DefaultCommandFactory).QueryBufferedAsync<global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer, global::Foo.Customer>(param, map, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, RowFactory0.Instance, splitOn));
 
         }
 
@@ -117,13 +233,15 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                 {
                     tokens[i] = -1;
                 }
-                return null;
+                return tokenCount;
             }
             public override global::Foo.Customer Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
                 global::Foo.Customer result = new();
-                foreach (var token in tokens)
+                int tokenCount = state is int count ? count : tokens.Length;
+                for (int i = 0; i < tokenCount; i++)
                 {
+                    var token = tokens[i];
                     switch (token)
                     {
                         case 0:
@@ -143,9 +261,6 @@ namespace Dapper.AOT // interceptors must be in a known namespace
                             break;
                         case 5:
                             result.Z = reader.IsDBNull(columnOffset) ? (double?)null : GetValue<double>(reader, columnOffset);
-                            break;
-                        case -1:
-                            // unmapped column, skip
                             break;
 
                     }
