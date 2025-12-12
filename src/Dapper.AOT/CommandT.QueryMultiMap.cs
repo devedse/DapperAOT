@@ -88,7 +88,7 @@ partial struct Command<TArgs>
                 do
                 {
                     var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, split, tokenState2);
+                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
                     results.Add(map(obj1, obj2));
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
