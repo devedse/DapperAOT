@@ -79,15 +79,17 @@ partial struct Command<TArgs>
             List<TReturn> results;
             if (state.Reader.Read())
             {
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
                 var split = FindSplits(state.Reader, splitOn, 1)[0];
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), split);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, split), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(split), split);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, split, tokenState2);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, split), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(split), split, tokenState2);
                     results.Add(map(obj1, obj2));
                 }
                 while (state.Reader.Read());
@@ -131,14 +133,16 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 1);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0]), splits[0]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0]), splits[0], tokenState2);
                     results.Add(map(obj1, obj2));
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -181,16 +185,18 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 2);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1]), splits[1]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1]), splits[1], tokenState3);
                     results.Add(map(obj1, obj2, obj3));
                 }
                 while (state.Reader.Read());
@@ -234,16 +240,18 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 2);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1]), splits[1]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1]), splits[1], tokenState3);
                     results.Add(map(obj1, obj2, obj3));
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -286,18 +294,20 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 3);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2]), splits[2]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2]), splits[2], tokenState4);
                     results.Add(map(obj1, obj2, obj3, obj4));
                 }
                 while (state.Reader.Read());
@@ -342,18 +352,20 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 3);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2]), splits[2]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2]), splits[2], tokenState4);
                     results.Add(map(obj1, obj2, obj3, obj4));
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -397,20 +409,22 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 4);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3]), splits[3]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3]), splits[3], tokenState5);
                     results.Add(map(obj1, obj2, obj3, obj4, obj5));
                 }
                 while (state.Reader.Read());
@@ -456,20 +470,22 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 4);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3]), splits[3]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3]), splits[3], tokenState5);
                     results.Add(map(obj1, obj2, obj3, obj4, obj5));
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -514,22 +530,24 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 5);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
-                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, state.Lease(), splits[4]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3], splits[4] - splits[3]), splits[3]);
+                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, allTokens.Slice(splits[4]), splits[4]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
-                    var obj6 = factory6.Read(state.Reader, state.Tokens, splits[4], tokenState6);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3], splits[4] - splits[3]), splits[3], tokenState5);
+                    var obj6 = factory6.Read(state.Reader, allTokensReadOnly.Slice(splits[4]), splits[4], tokenState6);
                     results.Add(map(obj1, obj2, obj3, obj4, obj5, obj6));
                 }
                 while (state.Reader.Read());
@@ -576,22 +594,24 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 5);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
-                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, state.Lease(), splits[4]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3], splits[4] - splits[3]), splits[3]);
+                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, allTokens.Slice(splits[4]), splits[4]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
-                    var obj6 = factory6.Read(state.Reader, state.Tokens, splits[4], tokenState6);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3], splits[4] - splits[3]), splits[3], tokenState5);
+                    var obj6 = factory6.Read(state.Reader, allTokensReadOnly.Slice(splits[4]), splits[4], tokenState6);
                     results.Add(map(obj1, obj2, obj3, obj4, obj5, obj6));
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -637,24 +657,26 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 6);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
-                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, state.Lease(), splits[4]);
-                var tokenState7 = (factory7 ??= RowFactory<T7>.Default).Tokenize(state.Reader, state.Lease(), splits[5]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3], splits[4] - splits[3]), splits[3]);
+                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, allTokens.Slice(splits[4], splits[5] - splits[4]), splits[4]);
+                var tokenState7 = (factory7 ??= RowFactory<T7>.Default).Tokenize(state.Reader, allTokens.Slice(splits[5]), splits[5]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
-                    var obj6 = factory6.Read(state.Reader, state.Tokens, splits[4], tokenState6);
-                    var obj7 = factory7.Read(state.Reader, state.Tokens, splits[5], tokenState7);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3], splits[4] - splits[3]), splits[3], tokenState5);
+                    var obj6 = factory6.Read(state.Reader, allTokensReadOnly.Slice(splits[4], splits[5] - splits[4]), splits[4], tokenState6);
+                    var obj7 = factory7.Read(state.Reader, allTokensReadOnly.Slice(splits[5]), splits[5], tokenState7);
                     results.Add(map(obj1, obj2, obj3, obj4, obj5, obj6, obj7));
                 }
                 while (state.Reader.Read());
@@ -702,24 +724,26 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 6);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
-                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, state.Lease(), splits[4]);
-                var tokenState7 = (factory7 ??= RowFactory<T7>.Default).Tokenize(state.Reader, state.Lease(), splits[5]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3], splits[4] - splits[3]), splits[3]);
+                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, allTokens.Slice(splits[4], splits[5] - splits[4]), splits[4]);
+                var tokenState7 = (factory7 ??= RowFactory<T7>.Default).Tokenize(state.Reader, allTokens.Slice(splits[5]), splits[5]);
                 
                 results = RowFactory.GetRowBuffer<TReturn>(rowCountHint);
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
-                    var obj6 = factory6.Read(state.Reader, state.Tokens, splits[4], tokenState6);
-                    var obj7 = factory7.Read(state.Reader, state.Tokens, splits[5], tokenState7);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3], splits[4] - splits[3]), splits[3], tokenState5);
+                    var obj6 = factory6.Read(state.Reader, allTokensReadOnly.Slice(splits[4], splits[5] - splits[4]), splits[4], tokenState6);
+                    var obj7 = factory7.Read(state.Reader, allTokensReadOnly.Slice(splits[5]), splits[5], tokenState7);
                     results.Add(map(obj1, obj2, obj3, obj4, obj5, obj6, obj7));
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -757,14 +781,16 @@ partial struct Command<TArgs>
 
             if (state.Reader.Read())
             {
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
                 var split = FindSplits(state.Reader, splitOn, 1)[0];
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), split);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, split), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(split), split);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, split, tokenState2);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, split), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(split), split, tokenState2);
                     yield return map(obj1, obj2);
                 }
                 while (state.Reader.Read());
@@ -799,14 +825,16 @@ partial struct Command<TArgs>
 
             if (await state.Reader.ReadAsync(cancellationToken))
             {
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
                 var split = FindSplits(state.Reader, splitOn, 1)[0];
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), split);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, split), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(split), split);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, split, tokenState2);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, split), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(split), split, tokenState2);
                     yield return map(obj1, obj2);
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -841,15 +869,17 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 2);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1]), splits[1]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1]), splits[1], tokenState3);
                     yield return map(obj1, obj2, obj3);
                 }
                 while (state.Reader.Read());
@@ -886,15 +916,17 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 2);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1]), splits[1]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1]), splits[1], tokenState3);
                     yield return map(obj1, obj2, obj3);
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -930,17 +962,19 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 3);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2]), splits[2]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2]), splits[2], tokenState4);
                     yield return map(obj1, obj2, obj3, obj4);
                 }
                 while (state.Reader.Read());
@@ -978,17 +1012,19 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 3);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2]), splits[2]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2]), splits[2], tokenState4);
                     yield return map(obj1, obj2, obj3, obj4);
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -1025,19 +1061,21 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 4);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3]), splits[3]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3]), splits[3], tokenState5);
                     yield return map(obj1, obj2, obj3, obj4, obj5);
                 }
                 while (state.Reader.Read());
@@ -1076,19 +1114,21 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 4);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3]), splits[3]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3]), splits[3], tokenState5);
                     yield return map(obj1, obj2, obj3, obj4, obj5);
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -1126,21 +1166,23 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 5);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
-                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, state.Lease(), splits[4]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3], splits[4] - splits[3]), splits[3]);
+                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, allTokens.Slice(splits[4]), splits[4]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
-                    var obj6 = factory6.Read(state.Reader, state.Tokens, splits[4], tokenState6);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3], splits[4] - splits[3]), splits[3], tokenState5);
+                    var obj6 = factory6.Read(state.Reader, allTokensReadOnly.Slice(splits[4]), splits[4], tokenState6);
                     yield return map(obj1, obj2, obj3, obj4, obj5, obj6);
                 }
                 while (state.Reader.Read());
@@ -1180,21 +1222,23 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 5);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
-                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, state.Lease(), splits[4]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3], splits[4] - splits[3]), splits[3]);
+                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, allTokens.Slice(splits[4]), splits[4]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
-                    var obj6 = factory6.Read(state.Reader, state.Tokens, splits[4], tokenState6);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3], splits[4] - splits[3]), splits[3], tokenState5);
+                    var obj6 = factory6.Read(state.Reader, allTokensReadOnly.Slice(splits[4]), splits[4], tokenState6);
                     yield return map(obj1, obj2, obj3, obj4, obj5, obj6);
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -1233,23 +1277,25 @@ partial struct Command<TArgs>
             if (state.Reader.Read())
             {
                 var splits = FindSplits(state.Reader, splitOn, 6);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
-                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, state.Lease(), splits[4]);
-                var tokenState7 = (factory7 ??= RowFactory<T7>.Default).Tokenize(state.Reader, state.Lease(), splits[5]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3], splits[4] - splits[3]), splits[3]);
+                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, allTokens.Slice(splits[4], splits[5] - splits[4]), splits[4]);
+                var tokenState7 = (factory7 ??= RowFactory<T7>.Default).Tokenize(state.Reader, allTokens.Slice(splits[5]), splits[5]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
-                    var obj6 = factory6.Read(state.Reader, state.Tokens, splits[4], tokenState6);
-                    var obj7 = factory7.Read(state.Reader, state.Tokens, splits[5], tokenState7);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3], splits[4] - splits[3]), splits[3], tokenState5);
+                    var obj6 = factory6.Read(state.Reader, allTokensReadOnly.Slice(splits[4], splits[5] - splits[4]), splits[4], tokenState6);
+                    var obj7 = factory7.Read(state.Reader, allTokensReadOnly.Slice(splits[5]), splits[5], tokenState7);
                     yield return map(obj1, obj2, obj3, obj4, obj5, obj6, obj7);
                 }
                 while (state.Reader.Read());
@@ -1290,23 +1336,25 @@ partial struct Command<TArgs>
             if (await state.Reader.ReadAsync(cancellationToken))
             {
                 var splits = FindSplits(state.Reader, splitOn, 6);
-                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, state.Lease(), 0);
-                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, state.Lease(), splits[0]);
-                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, state.Lease(), splits[1]);
-                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, state.Lease(), splits[2]);
-                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, state.Lease(), splits[3]);
-                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, state.Lease(), splits[4]);
-                var tokenState7 = (factory7 ??= RowFactory<T7>.Default).Tokenize(state.Reader, state.Lease(), splits[5]);
+                var allTokens = state.Lease();
+                var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
+                var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
+                var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1], splits[2] - splits[1]), splits[1]);
+                var tokenState4 = (factory4 ??= RowFactory<T4>.Default).Tokenize(state.Reader, allTokens.Slice(splits[2], splits[3] - splits[2]), splits[2]);
+                var tokenState5 = (factory5 ??= RowFactory<T5>.Default).Tokenize(state.Reader, allTokens.Slice(splits[3], splits[4] - splits[3]), splits[3]);
+                var tokenState6 = (factory6 ??= RowFactory<T6>.Default).Tokenize(state.Reader, allTokens.Slice(splits[4], splits[5] - splits[4]), splits[4]);
+                var tokenState7 = (factory7 ??= RowFactory<T7>.Default).Tokenize(state.Reader, allTokens.Slice(splits[5]), splits[5]);
                 
                 do
                 {
-                    var obj1 = factory1.Read(state.Reader, state.Tokens, 0, tokenState1);
-                    var obj2 = factory2.Read(state.Reader, state.Tokens, splits[0], tokenState2);
-                    var obj3 = factory3.Read(state.Reader, state.Tokens, splits[1], tokenState3);
-                    var obj4 = factory4.Read(state.Reader, state.Tokens, splits[2], tokenState4);
-                    var obj5 = factory5.Read(state.Reader, state.Tokens, splits[3], tokenState5);
-                    var obj6 = factory6.Read(state.Reader, state.Tokens, splits[4], tokenState6);
-                    var obj7 = factory7.Read(state.Reader, state.Tokens, splits[5], tokenState7);
+                    var allTokensReadOnly = state.Tokens;
+                    var obj1 = factory1.Read(state.Reader, allTokensReadOnly.Slice(0, splits[0]), 0, tokenState1);
+                    var obj2 = factory2.Read(state.Reader, allTokensReadOnly.Slice(splits[0], splits[1] - splits[0]), splits[0], tokenState2);
+                    var obj3 = factory3.Read(state.Reader, allTokensReadOnly.Slice(splits[1], splits[2] - splits[1]), splits[1], tokenState3);
+                    var obj4 = factory4.Read(state.Reader, allTokensReadOnly.Slice(splits[2], splits[3] - splits[2]), splits[2], tokenState4);
+                    var obj5 = factory5.Read(state.Reader, allTokensReadOnly.Slice(splits[3], splits[4] - splits[3]), splits[3], tokenState5);
+                    var obj6 = factory6.Read(state.Reader, allTokensReadOnly.Slice(splits[4], splits[5] - splits[4]), splits[4], tokenState6);
+                    var obj7 = factory7.Read(state.Reader, allTokensReadOnly.Slice(splits[5]), splits[5], tokenState7);
                     yield return map(obj1, obj2, obj3, obj4, obj5, obj6, obj7);
                 }
                 while (await state.Reader.ReadAsync(cancellationToken));
@@ -1322,3 +1370,4 @@ partial struct Command<TArgs>
         }
     }
 }
+
