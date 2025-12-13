@@ -27,18 +27,27 @@ partial struct Command<TArgs>
         }
 #endif
         
+        // Normalize the split column names for comparison
+        for (int idx = 0; idx < splitColumns.Length; idx++)
+        {
+            splitColumns[idx] = StringHashing.Normalize(splitColumns[idx]);
+        }
+        
         int splitIndex = 0;
         int lastSplit = 0;
         
         for (int i = 0; i < fieldCount && splitIndex < count; i++)
         {
             var name = reader.GetName(i);
+            bool matched = false;
             foreach (var split in splitColumns)
             {
-                if (StringHashing.NormalizedEquals(name, split))
+                bool equals = StringHashing.NormalizedEquals(name, split);
+                if (equals)
                 {
                     splits[splitIndex++] = i;
                     lastSplit = i;
+                    matched = true;
                     break;
                 }
             }
@@ -241,6 +250,7 @@ partial struct Command<TArgs>
             {
                 var splits = FindSplits(state.Reader, splitOn, 2);
                 var allTokens = state.Lease();
+                
                 var tokenState1 = (factory1 ??= RowFactory<T1>.Default).Tokenize(state.Reader, allTokens.Slice(0, splits[0]), 0);
                 var tokenState2 = (factory2 ??= RowFactory<T2>.Default).Tokenize(state.Reader, allTokens.Slice(splits[0], splits[1] - splits[0]), splits[0]);
                 var tokenState3 = (factory3 ??= RowFactory<T3>.Default).Tokenize(state.Reader, allTokens.Slice(splits[1]), splits[1]);
