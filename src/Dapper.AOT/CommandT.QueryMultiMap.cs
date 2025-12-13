@@ -27,27 +27,18 @@ partial struct Command<TArgs>
         }
 #endif
         
-        // Normalize the split column names for comparison
-        for (int idx = 0; idx < splitColumns.Length; idx++)
-        {
-            splitColumns[idx] = StringHashing.Normalize(splitColumns[idx]);
-        }
-        
         int splitIndex = 0;
         int lastSplit = 0;
         
         for (int i = 0; i < fieldCount && splitIndex < count; i++)
         {
             var name = reader.GetName(i);
-            bool matched = false;
             foreach (var split in splitColumns)
             {
-                bool equals = StringHashing.NormalizedEquals(name, split);
-                if (equals)
+                if (string.Equals(name, split, StringComparison.OrdinalIgnoreCase))
                 {
                     splits[splitIndex++] = i;
                     lastSplit = i;
-                    matched = true;
                     break;
                 }
             }
