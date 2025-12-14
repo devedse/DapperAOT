@@ -82,6 +82,7 @@ namespace Dapper.AOT // interceptors must be in a known namespace
             }
             public override global::HazNameId Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
+                if (columnOffset > 0 && reader.IsDBNull(columnOffset)) return default!;
                 global::HazNameId result = new();
                 int tokenCount = state is int count ? count : tokens.Length;
                 for (int i = 0; i < tokenCount; i++)

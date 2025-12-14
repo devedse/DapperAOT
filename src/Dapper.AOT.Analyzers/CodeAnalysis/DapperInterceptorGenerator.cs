@@ -903,6 +903,10 @@ public sealed partial class DapperInterceptorGenerator : InterceptorGeneratorBas
 
             sb.Append("public override ").Append(type).Append(" Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)").Indent().NewLine();
 
+            // For multi-map queries: if this is not the first entity (columnOffset > 0) and the first column is NULL,
+            // return default to handle LEFT JOINs where the related entity doesn't exist
+            sb.Append("if (columnOffset > 0 && reader.IsDBNull(columnOffset)) return default!;").NewLine();
+
             int token = 0;
             var deferredMethodArgumentsOrdered = new SortedList<int, string>();
 

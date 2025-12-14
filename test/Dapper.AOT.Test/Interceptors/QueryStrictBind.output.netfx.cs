@@ -112,6 +112,7 @@ namespace Dapper.AOT // interceptors must be in a known namespace
             }
             public override global::Foo.Customer Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
+                if (columnOffset > 0 && reader.IsDBNull(columnOffset)) return default!;
                 global::Foo.Customer result = new();
                 int tokenCount = state is int count ? count : tokens.Length;
                 for (int i = 0; i < tokenCount; i++)
@@ -162,6 +163,7 @@ namespace Dapper.AOT // interceptors must be in a known namespace
             }
             public override global::Foo.Customer Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
+                if (columnOffset > 0 && reader.IsDBNull(columnOffset)) return default!;
                 global::Foo.Customer result = new();
                 int lim = global::System.Math.Min(tokens.Length, 5);
                 for (int token = 0; token < lim; token++) // query-columns predefined
@@ -228,6 +230,7 @@ namespace Dapper.AOT // interceptors must be in a known namespace
             }
             public override global::Foo.Customer Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
+                if (columnOffset > 0 && reader.IsDBNull(columnOffset)) return default!;
                 global::Foo.Customer result = new();
                 int tokenCount = state is int count ? count : tokens.Length;
                 for (int i = 0; i < tokenCount; i++)
@@ -294,6 +297,7 @@ namespace Dapper.AOT // interceptors must be in a known namespace
             }
             public override global::Foo.Customer Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
+                if (columnOffset > 0 && reader.IsDBNull(columnOffset)) return default!;
                 global::Foo.Customer result = new();
                 int tokenCount = state is int count ? count : tokens.Length;
                 for (int i = 0; i < tokenCount; i++)

@@ -78,6 +78,7 @@ namespace Dapper.AOT // interceptors must be in a known namespace
             }
             public override global::SomeType Read(global::System.Data.Common.DbDataReader reader, global::System.ReadOnlySpan<int> tokens, int columnOffset, object? state)
             {
+                if (columnOffset > 0 && reader.IsDBNull(columnOffset)) return default!;
                 int value0 = default;
                 string? value1 = default;
                 bool value2 = default;
