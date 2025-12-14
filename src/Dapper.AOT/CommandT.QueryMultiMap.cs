@@ -17,6 +17,17 @@ partial struct Command<TArgs>
     {
         var splits = new int[count];
         var fieldCount = reader.FieldCount;
+        
+        // Handle wildcard splitOn - split after every column
+        if (splitOn == "*")
+        {
+            for (int i = 0; i < count; i++)
+            {
+                splits[i] = i + 1;
+            }
+            return splits;
+        }
+        
 #if NET5_0_OR_GREATER
         var splitColumns = splitOn.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 #else
@@ -27,32 +38,59 @@ partial struct Command<TArgs>
         }
 #endif
         
-        int splitIndex = 0;
-        int lastSplit = 0;
+        // Search RIGHT-TO-LEFT like original Dapper to handle duplicate column names correctly
+        // "in this we go right to left through the data reader in order to cope with properties that are
+        // named the same as a subsequent primary key that we split on"
+        int splitIndex = count - 1;
+        int currentPos = fieldCount;
         
-        for (int i = 0; i < fieldCount && splitIndex < count; i++)
+        // Process splits from last to first
+        for (int splitIdx = splitColumns.Length - 1; splitIdx >= 0; splitIdx--)
         {
-            var name = reader.GetName(i);
-            foreach (var split in splitColumns)
+            if (splitIndex < 0) break;
+            
+            var split = splitColumns[splitIdx];
+            bool found = false;
+            
+            // Search backwards from currentPos
+            for (int i = currentPos - 1; i > 0; i--)
             {
+                var name = reader.GetName(i);
                 if (string.Equals(name, split, StringComparison.OrdinalIgnoreCase))
                 {
-                    splits[splitIndex++] = i;
-                    lastSplit = i;
+                    splits[splitIndex--] = i;
+                    currentPos = i;
+                    found = true;
                     break;
                 }
+            }
+            
+            if (!found)
+            {
+                // Build helpful error message like original Dapper
+                var availableColumns = new System.Text.StringBuilder();
+                for (int i = 0; i < fieldCount; i++)
+                {
+                    if (i > 0) availableColumns.Append(", ");
+                    availableColumns.Append(reader.GetName(i));
+                }
+                throw new System.ArgumentException(
+                    $"Multi-map error: splitOn column '{split}' was not found - please ensure your splitOn parameter is set and in the correct order (available columns: {availableColumns})",
+                    nameof(splitOn));
             }
         }
         
         // Fill remaining splits evenly if not all found
-        if (splitIndex < count)
+        // Note: splitIndex will be >= 0 if we didn't find all splits (since we decrement on each find)
+        if (splitIndex >= 0)
         {
-            var remaining = count - splitIndex;
-            var step = (fieldCount - lastSplit) / (remaining + 1);
-            for (int i = 0; i < remaining; i++)
+            var remaining = splitIndex + 1;
+            var step = currentPos / (remaining + 1);
+            for (int i = 0; i <= splitIndex; i++)
             {
-                lastSplit += step;
-                splits[splitIndex++] = lastSplit;
+                currentPos -= step;
+                if (currentPos <= 0) currentPos = 1; // Ensure we don't go below column 1
+                splits[i] = currentPos;
             }
         }
         
